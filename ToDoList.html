@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ToDo List</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        margin: 0;
+        padding: 0;
+    }
+    #todo-list {
+        max-width: 400px;
+        margin: 20px auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #333;
+        text-align: center;
+    }
+    input[type="text"] {
+        width: calc(100% - 92px);
+        padding: 8px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    button {
+        padding: 8px 16px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    button:hover {
+        background-color: #45a049;
+    }
+    button:disabled {
+        background-color: #ddd;
+        cursor: not-allowed;
+    }
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    li {
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px;
+        background-color: #f9f9f9;
+        border-radius: 4px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    .completed {
+        text-decoration: line-through;
+        color: #aaa;
+    }
+</style>
+</head>
+<body>
+<div id="todo-list">
+    <h2>ToDo List</h2>
+    <input type="text" id="taskInput" placeholder="Adicionar nova tarefa">
+    <button id="addTask">Adicionar</button>
+    <button id="clearList">Limpar Lista</button>
+    <ul id="tasks"></ul>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const taskInput = document.getElementById("taskInput");
+    const addTaskButton = document.getElementById("addTask");
+    const clearListButton = document.getElementById("clearList");
+    const tasksList = document.getElementById("tasks");
+
+    addTaskButton.addEventListener("click", function() {
+        addTask();
+    });
+
+    taskInput.addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            addTask();
+        }
+    });
+
+    clearListButton.addEventListener("click", function() {
+        tasksList.innerHTML = "";
+    });
+
+    function addTask() {
+        const taskText = taskInput.value.trim();
+        if (taskText !== "") {
+            const taskItem = document.createElement("li");
+            const taskTextSpan = document.createElement("span");
+            taskTextSpan.textContent = taskText;
+            taskItem.appendChild(taskTextSpan);
+
+            const completeButton = document.createElement("button");
+            completeButton.textContent = "Concluir";
+            completeButton.addEventListener("click", function() {
+                taskTextSpan.classList.toggle("completed");
+                completeButton.disabled = true;
+                completeButton.style.backgroundColor = "#ddd";
+            });
+            taskItem.appendChild(completeButton);
+
+            tasksList.appendChild(taskItem);
+            taskInput.value = "";
+        } else {
+            alert("Por favor, insira uma tarefa antes de adicionar.");
+        }
+    }
+});
+</script>
+</body>
+</html>
