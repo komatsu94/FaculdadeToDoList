@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -75,20 +75,25 @@
     <input type="text" id="taskInput" placeholder="Adicionar nova tarefa">
     <button id="addTask">Adicionar</button>
     <button id="clearList">Limpar Lista</button>
+    <div>
+        <label for="filter">Filtrar por:</label>
+        <select id="filter">
+            <option value="all">Todas</option>
+            <option value="completed">Concluídas</option>
+            <option value="uncompleted">Não Concluídas</option>
+        </select>
+    </div>
     <ul id="tasks"></ul>
 </div>
-
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const taskInput = document.getElementById("taskInput");
     const addTaskButton = document.getElementById("addTask");
     const clearListButton = document.getElementById("clearList");
     const tasksList = document.getElementById("tasks");
+    const filterSelect = document.getElementById("filter");
 
-    addTaskButton.addEventListener("click", function() {
-        addTask();
-    });
-
+    addTaskButton.addEventListener("click", addTask);
     taskInput.addEventListener("keypress", function(event) {
         if (event.key === "Enter") {
             addTask();
@@ -99,10 +104,13 @@ document.addEventListener("DOMContentLoaded", function() {
         tasksList.innerHTML = "";
     });
 
+    filterSelect.addEventListener("change", filterTasks);
+
     function addTask() {
         const taskText = taskInput.value.trim();
         if (taskText !== "") {
             const taskItem = document.createElement("li");
+
             const taskTextSpan = document.createElement("span");
             taskTextSpan.textContent = taskText;
             taskItem.appendChild(taskTextSpan);
@@ -111,15 +119,40 @@ document.addEventListener("DOMContentLoaded", function() {
             completeButton.textContent = "Concluir";
             completeButton.addEventListener("click", function() {
                 taskTextSpan.classList.toggle("completed");
-                completeButton.disabled = true;
-                completeButton.style.backgroundColor = "#ddd";
+                filterTasks();
             });
             taskItem.appendChild(completeButton);
 
+            const editButton = document.createElement("button");
+            editButton.textContent = "Editar";
+            editButton.addEventListener("click", function() {
+                const newText = prompt("Edite a tarefa:", taskTextSpan.textContent);
+                if (newText !== null && newText.trim() !== "") {
+                    taskTextSpan.textContent = newText.trim();
+                }
+            });
+            taskItem.appendChild(editButton);
+
             tasksList.appendChild(taskItem);
             taskInput.value = "";
+            filterTasks();
         } else {
             alert("Por favor, insira uma tarefa antes de adicionar.");
+        }
+    }
+
+    function filterTasks() {
+        const filterValue = filterSelect.value;
+        const tasks = tasksList.getElementsByTagName("li");
+        for (let i = 0; i < tasks.length; i++) {
+            const task = tasks[i];
+            const isCompleted = task.querySelector("span").classList.contains("completed");
+            if ((filterValue === "completed" && !isCompleted) ||
+                (filterValue === "uncompleted" && isCompleted)) {
+                task.style.display = "none";
+            } else {
+                task.style.display = "flex";
+            }
         }
     }
 });
